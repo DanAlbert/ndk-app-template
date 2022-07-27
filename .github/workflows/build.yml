@@ -43,3 +43,36 @@ jobs:
         with:
           name: app-debug-androidTest
           path: app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+
+  test:
+    name: Device tests
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: app-debug
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: app-debug-androidTest
+
+      - id: auth
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: '${{ secrets.FIREBASE_KEY }}'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          project_id: ndk-app-template
+
+      - name: Run instrumentation tests in Firebase test lab
+        run: gcloud firebase test android run
+          --type instrumentation
+          --app app-debug.apk
+          --test app-debug-androidTest.apk
+          --device model=oriole,version=33,locale=en,orientation=portrait
