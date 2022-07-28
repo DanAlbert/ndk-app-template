@@ -8,6 +8,39 @@ on:
 
 jobs:
   build:
+    name: Build debug APKs
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: "11"
+          distribution: "temurin"
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build debug APKs
+        run: ./gradlew --stacktrace assembleDebug assembleDebugAndroidTest
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-debug
+          path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload debug test APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-debug-androidTest
+          path: app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+
+  unit-tests:
+    name: Run unit tests
     runs-on: ubuntu-latest
 
     steps:
@@ -26,26 +59,8 @@ jobs:
       - name: Build and run unit tests
         run: ./gradlew --stacktrace check
 
-      - name: Build debug APK
-        run: ./gradlew --stacktrace assembleDebug
-
-      - name: Upload debug APK
-        uses: actions/upload-artifact@v3
-        with:
-          name: app-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
-
-      - name: Build debug test APK
-        run: ./gradlew --stacktrace assembleDebugAndroidTest
-
-      - name: Upload debug test APK
-        uses: actions/upload-artifact@v3
-        with:
-          name: app-debug-androidTest
-          path: app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
-
-  test:
-    name: Device tests
+  device-tests:
+    name: Run device tests
     needs: build
     runs-on: ubuntu-latest
 
