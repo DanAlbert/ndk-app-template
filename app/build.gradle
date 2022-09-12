@@ -5,13 +5,13 @@ plugins {
 
 android {
     namespace 'com.example.myapplication'
-    compileSdk 32
-    ndkVersion "24.0.8215888"
+    compileSdk 33
+    ndkVersion "25.1.8937393"
 
     defaultConfig {
         applicationId "com.example.myapplication"
         minSdk 21
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -30,7 +30,7 @@ android {
     externalNativeBuild {
         cmake {
             path file('src/main/cpp/CMakeLists.txt')
-            version '3.18.1'
+            version '3.22.1'
         }
     }
 
@@ -53,8 +53,8 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.test.ext:junit-gtest:1.0.0-alpha01'
