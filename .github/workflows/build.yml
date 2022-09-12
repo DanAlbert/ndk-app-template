@@ -63,31 +63,37 @@ jobs:
     name: Run device tests
     needs: build
     runs-on: ubuntu-latest
+    env:
+      HAVE_FIREBASE_KEY: ${{ secrets.FIREBASE_KEY != '' }}
 
     steps:
       - uses: actions/checkout@v3
 
       - uses: actions/download-artifact@v3
+        if: ${{ env.HAVE_FIREBASE_KEY == 'true' }}
         with:
           name: app-debug
 
       - uses: actions/download-artifact@v3
+        if: ${{ env.HAVE_FIREBASE_KEY == 'true' }}
         with:
           name: app-debug-androidTest
 
       - id: auth
         uses: google-github-actions/auth@v0
+        if: ${{ env.HAVE_FIREBASE_KEY == 'true' }}
         with:
-          credentials_json: '${{ secrets.FIREBASE_KEY }}'
+          credentials_json: "${{ secrets.FIREBASE_KEY }}"
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
+        if: ${{ env.HAVE_FIREBASE_KEY == 'true' }}
         with:
           project_id: ndk-app-template
 
       - name: Run instrumentation tests in Firebase test lab
-        run: gcloud firebase test android run
-          --type instrumentation
-          --app app-debug.apk
-          --test app-debug-androidTest.apk
-          --device model=oriole,version=33,locale=en,orientation=portrait
+        if: ${{ env.HAVE_FIREBASE_KEY == 'true' }}
+        run:
+          gcloud firebase test android run --type instrumentation --app
+          app-debug.apk --test app-debug-androidTest.apk --device
+          model=oriole,version=33,locale=en,orientation=portrait
