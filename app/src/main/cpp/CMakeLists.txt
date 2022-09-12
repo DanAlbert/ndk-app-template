@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18.1)
+cmake_minimum_required(VERSION 3.22.1)
 project("NDK App Template" VERSION 1.0.0 LANGUAGES C CXX)
 
 set(CLANG_TIDY_PATH
