@@ -31,6 +31,10 @@ target_link_options(app
     -flto
     -Wl,--version-script,${CMAKE_SOURCE_DIR}/libapp.map.txt
 )
+set_target_properties(app
+  PROPERTIES
+    LINK_DEPENDS ${CMAKE_SOURCE_DIR}/libapp.map.txt
+)
 
 add_library(app_tests SHARED app_test.cpp)
 target_link_libraries(app_tests
