@@ -11,6 +11,9 @@ jobs:
     name: Build debug APKs
     runs-on: ubuntu-latest
 
+    outputs:
+      hashes: ${{ steps.hash.outputs.hashes }}
+
     steps:
       - uses: actions/checkout@v3
 
@@ -25,7 +28,13 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build debug APKs
+        id: build
         run: ./gradlew --stacktrace assembleDebug assembleDebugAndroidTest
+
+      - name: Generate subject
+        id: hash
+        run: |
+          echo "hashes=$(sha256sum app/build/outputs/apk/**/*.apk | base64 -w0)" >> "$GITHUB_OUTPUT"
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v3
@@ -97,3 +106,13 @@ jobs:
           gcloud firebase test android run --type instrumentation --app
           app-debug.apk --test app-debug-androidTest.apk --device
           model=oriole,version=33,locale=en,orientation=portrait
+
+  provenance:
+    needs: [build]
+    permissions:
+      actions: read
+      id-token: write
+      contents: write
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.2.2
+    with:
+      base64-subjects: "${{ needs.build.outputs.hashes }}"
