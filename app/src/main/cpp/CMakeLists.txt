@@ -44,3 +44,7 @@ target_link_libraries(app_tests
     googletest::gmock
     junit-gtest::junit-gtest
 )
+target_include_directories(app_tests
+  PRIVATE
+    $<TARGET_PROPERTY:app_impl,INTERFACE_INCLUDE_DIRECTORIES>
+)
